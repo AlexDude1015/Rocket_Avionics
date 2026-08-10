@@ -21,6 +21,7 @@ void setup() {
   P_ground /= 20;
 
   Serial.print("Ground pressure: ");
+  
   Serial.println(P_ground);
 }
 

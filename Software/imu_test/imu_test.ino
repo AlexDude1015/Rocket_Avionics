@@ -27,9 +27,12 @@ uint8_t spi_read(uint8_t reg) {
 // --- Register addresses (MPU-6500) ---
 #define WHO_AM_I      0x75
 #define PWR_MGMT_1    0x6B
+#define USER_CTRL     0x6A
 #define GYRO_CONFIG   0x1B
 #define ACCEL_CONFIG  0x1C
 #define ACCEL_XOUT_H  0x3B   // start of 14-byte burst: accel(6) + temp(2) + gyro(6)
+
+#define MPU6500_WHO_AM_I_VALUE 0x70   // expected response for MPU-6500
 
 // --- Gyro bias values, filled in during calibration ---
 float gyro_bias_x = 0;
@@ -93,8 +96,16 @@ void setup() {
   Serial.print("WHO_AM_I: 0x");
   Serial.println(who, HEX);
 
+  if (who != MPU6500_WHO_AM_I_VALUE) {
+    Serial.println("WHO_AM_I mismatch — check wiring/CS pin before continuing");
+    while (1) delay(10);   // stop here so bad data doesn't get used
+  }
+
   spi_write(PWR_MGMT_1, 0x00);   // wake from sleep, use internal clock
   delay(100);
+
+  spi_write(USER_CTRL, 0x10);    // disable I2C interface, force SPI-only mode
+  delay(10);
 
   spi_write(GYRO_CONFIG, 0x18);   // ±2000 dps
   spi_write(ACCEL_CONFIG, 0x18);  // ±16g

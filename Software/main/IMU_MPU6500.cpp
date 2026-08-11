@@ -111,3 +111,19 @@ void imuGetCorrectedGyro(int16_t gx, int16_t gy, int16_t gz,
   gy_out = gy - gyroBiasY;
   gz_out = gz - gyroBiasZ;
 }
+
+void imuReadG(float &ax_g, float &ay_g, float &az_g,
+              float &gx_out, float &gy_out, float &gz_out) {
+  int16_t ax, ay, az, gx, gy, gz;
+  imuReadRaw(ax, ay, az, gx, gy, gz);
+
+  ax_g = ax / ACCEL_LSB_PER_G;
+  ay_g = ay / ACCEL_LSB_PER_G;
+  az_g = az / ACCEL_LSB_PER_G;
+
+  imuGetCorrectedGyro(gx, gy, gz, gx_out, gy_out, gz_out);
+}
+
+float imuAccelMagnitudeG(float ax_g, float ay_g, float az_g) {
+  return sqrt(ax_g * ax_g + ay_g * ay_g + az_g * az_g);
+}

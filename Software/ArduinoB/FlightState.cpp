@@ -1,5 +1,8 @@
 #include "FlightState.h"
 
+// See FlightState.h.
+// Returns string literals, which live for the whole program, so the caller
+// never needs to free or copy the result.
 const char *flightStateName(FlightState s) {
   switch (s) {
     case STATE_BOOT:            return "BOOT";
